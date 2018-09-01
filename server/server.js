@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const { ObjectID } = require('mongodb')
 
 const { mongoose } = require('./db/mongoose')
 
@@ -22,7 +23,7 @@ app.post('/todos', (req, res) => {
     .then(doc => {
       res.send(doc)
     }, e => {
-      res.status(400)
+      res.sendStatus(400)
       res.send(e)
     })
 })
@@ -33,12 +34,30 @@ app.get('/todos', (req, res) => {
     .then(todos => {
       res.send({ todos })
     }, e => {
-      res.send(400)
+      res.sendStatus(400)
       res.send(e)
     })
 })
 
 // GET /todos/:id
+app.get('/todos/:id', (req, res) => {
+  const todoID = req.params.id
+
+  if (!ObjectID.isValid(todoID)) {
+    return res.status(404).send();
+  }
+
+  Todo.findById(todoID)
+    .then(todo => {
+      if (!todo) {
+        return res.status(404).send();
+      }
+
+      res.send({ todo })
+    }, e => {
+      res.status(400).send();
+    })
+})
 
 // DELETE /todos/:id
 
