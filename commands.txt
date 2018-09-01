@@ -4,3 +4,7 @@ heroku create
 heroku addons:create mongolab:sandbox
 heroku config
 heroku config
+
+git push heroku master
+
+heroku logs
