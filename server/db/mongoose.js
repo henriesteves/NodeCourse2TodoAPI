@@ -4,7 +4,7 @@ const dbUrl = 'mongodb://localhost'
 const dbPort = '27017'
 const dbName = 'TodoApp'
 
-mongoose.connect(`${dbUrl}:${dbPort}/${dbName}`, { useNewUrlParser: true })
+mongoose.connect(process.env.MONGODB_URI || `${dbUrl}:${dbPort}/${dbName}`, { useNewUrlParser: true })
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))

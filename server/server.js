@@ -9,7 +9,7 @@ const { User } = require('./models/User')
 
 const app = express()
 
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(bodyParser.json())
 
@@ -64,7 +64,7 @@ app.get('/todos/:id', (req, res) => {
 // PATCH /todos/:id
 
 app.listen(port, () => {
-  console.log(`Started on port ${port}`)
+  console.log(`Running at port ${port}`)
 })
 
 module.exports = { app }
