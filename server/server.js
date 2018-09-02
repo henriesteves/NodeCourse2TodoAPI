@@ -84,8 +84,6 @@ app.delete('/todos/:id', (req, res) => {
 app.patch('/todos/:id', (req, res) => {
   const todoID = req.params.id
 
-  console.log(JSON.parse(JSON.stringify(bobyJson)))
-
   const body = _.pick(req.body, ['text', 'completed']);
   // const body = req.body.map(todo => ({ text: todo.text, completed: todo.completed }))
   // const body = bobyJson.map(todo => (({ text, completed }) => ({ text, completed }))(todo))
