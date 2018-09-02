@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { ObjectID } = require('mongodb')
+const _ = require('lodash')
 
 const { mongoose } = require('./db/mongoose')
 
@@ -80,6 +81,38 @@ app.delete('/todos/:id', (req, res) => {
 })
 
 // PATCH /todos/:id
+app.patch('/todos/:id', (req, res) => {
+  const todoID = req.params.id
+
+  console.log(JSON.parse(JSON.stringify(bobyJson)))
+
+  const body = _.pick(req.body, ['text', 'completed']);
+  // const body = req.body.map(todo => ({ text: todo.text, completed: todo.completed }))
+  // const body = bobyJson.map(todo => (({ text, completed }) => ({ text, completed }))(todo))
+
+  if (!ObjectID.isValid(todoID)) {
+    return res.status(404).send();
+  }
+
+  if (typeof(body.completed) === typeof(true) && body.completed) {
+    body.completedAt = new Date().getTime()
+  } else {
+    body.completed = false
+    body.completedAt = null
+  }
+
+  Todo.findByIdAndUpdate(todoID, { $set: body }, { new: true })
+    .then(todo => {
+      if (!todo) {
+        return res.status(404).send()
+      }
+
+      res.send({ todo })
+    })
+    .catch(e => {
+      res.status(400).send()
+    })
+})
 
 app.listen(port, () => {
   console.log(`Running at port ${port}`)
