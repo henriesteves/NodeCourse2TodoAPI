@@ -60,14 +60,14 @@ describe('POST /todos', () => {
       .end((err, res) => {
         if (err) {
           return done(err)
-        } else {
-          // console.log(res)
         }
 
-        Todo.find().then(todos => {
-          expect(todos.length).toBe(2)
-          done()
-        }).catch(e => done(e))
+        Todo.find()
+          .then(todos => {
+            expect(todos.length).toBe(2)
+            done()
+          })
+          .catch(e => done(e))
       })
   })
 
