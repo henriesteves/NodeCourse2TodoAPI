@@ -35,6 +35,7 @@ const UserSchema = new mongoose.Schema({
   }]
 })
 
+// arrow function does not bind the this
 UserSchema.methods.toJSON = function () {
   const user = this
   const userObject = user.toObject()
@@ -42,7 +43,6 @@ UserSchema.methods.toJSON = function () {
   return _.pick(userObject, ['_id', 'email'])
 }
 
-// arrow function does not bind the this
 UserSchema.methods.generateAuthToken = function () {
   const user = this
   const access = 'auth'
@@ -52,6 +52,28 @@ UserSchema.methods.generateAuthToken = function () {
   // user.tokens.concat([{ access, token }]) // do not working
 
   return user.save().then(() => token)
+}
+
+UserSchema.statics.findByToken = function (token) {
+  const User = this
+  let decoded
+
+  try {
+    decoded = jwt.verify(token, 'acb123')
+  } catch (e) {
+    // return new Promise((resolve, reject) => {
+    //   reject()
+    // })
+
+    // same as
+    return Promise.reject()
+  }
+
+  return User.findOne({
+    '_id': decoded._id, // não há necessidade usar quotes nesta linhas, mas para manter um padrão será usado
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  })
 }
 
 const User = mongoose.model('User', UserSchema)

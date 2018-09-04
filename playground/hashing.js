@@ -34,7 +34,9 @@ const data = {
 
 const token = jwt.sign(data, '123456')
 console.log('token', token)
+// token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsImlhdCI6MTUzNjAyNDE3NH0.HXdpiLu223xckRgcNNt2bPlrinH_Z5fOlblHGPJG614
 
 const decoded = jwt.verify(token, '123456')
 console.log('decoded', decoded)
+// decoded { id: 10, iat: 1536024138 }
 
