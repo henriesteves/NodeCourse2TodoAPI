@@ -25,6 +25,7 @@ const { SHA256 } = require('crypto-js')
 //   console.log('Data was changed. Do not trust!')
 // }
 
+
 // https://jwt.io
 const jwt = require('jsonwebtoken')
 
@@ -40,3 +41,20 @@ const decoded = jwt.verify(token, '123456')
 console.log('decoded', decoded)
 // decoded { id: 10, iat: 1536024138 }
 
+
+// https://www.npmjs.com/package/bcryptjs
+const bcrypt = require('bcryptjs')
+
+const password = '123456'
+
+bcrypt.genSalt(10, (err, salt) => {
+  bcrypt.hash(password, salt, (err, hash) => {
+    console.log('hash', hash)
+  })
+})
+
+const hashedPassword = '$2a$10$lBD4.UMlNdHPxIkXzauNg./hMjC1CHyPmLmqWICmmMsFPLTY7IdDi'
+
+bcrypt.compare(password, hashedPassword, (err, res) => {
+  console.log(res)
+})
