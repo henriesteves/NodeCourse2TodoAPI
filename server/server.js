@@ -19,9 +19,10 @@ const port = process.env.PORT
 app.use(bodyParser.json())
 
 // POST /todos
-app.post('/todos', (req, res) => {
+app.post('/todos', authenticate, (req, res) => {
   const todo = new Todo({
-    text: req.body.text
+    text: req.body.text,
+    _creator: req.user._id
   })
 
   todo.save()
@@ -34,8 +35,10 @@ app.post('/todos', (req, res) => {
 })
 
 // GET /todos
-app.get('/todos', (req, res) => {
-  Todo.find()
+app.get('/todos', authenticate, (req, res) => {
+  Todo.find({
+    _creator: req.user._id
+  })
     .then(todos => {
       res.send({ todos })
     }, e => {
@@ -45,14 +48,17 @@ app.get('/todos', (req, res) => {
 })
 
 // GET /todos/:id
-app.get('/todos/:id', (req, res) => {
+app.get('/todos/:id', authenticate, (req, res) => {
   const todoID = req.params.id
 
   if (!ObjectID.isValid(todoID)) {
     return res.status(404).send();
   }
 
-  Todo.findById(todoID)
+  Todo.findOne({
+    _id: todoID,
+    _creator: req.user._id
+  })
     .then(todo => {
       if (!todo) {
         return res.status(404).send();
@@ -65,14 +71,17 @@ app.get('/todos/:id', (req, res) => {
 })
 
 // DELETE /todos/:id
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
   const todoID = req.params.id
 
   if (!ObjectID.isValid(todoID)) {
     return res.status(404).send();
   }
 
-  Todo.findByIdAndRemove(todoID)
+  Todo.findOneAndRemove({
+    _id: todoID,
+    _creator: req.user._id
+  })
     .then(todo => {
       if (!todo) {
         return res.status(404).send();
@@ -85,7 +94,7 @@ app.delete('/todos/:id', (req, res) => {
 })
 
 // PATCH /todos/:id
-app.patch('/todos/:id', (req, res) => {
+app.patch('/todos/:id', authenticate, (req, res) => {
   const todoID = req.params.id
 
   const body = _.pick(req.body, ['text', 'completed']);
@@ -103,7 +112,10 @@ app.patch('/todos/:id', (req, res) => {
     body.completedAt = null
   }
 
-  Todo.findByIdAndUpdate(todoID, { $set: body }, { new: true })
+  Todo.findOneAndUpdate({
+    _id: todoID,
+    _creator: req.user._id
+  }, { $set: body }, { new: true })
     .then(todo => {
       if (!todo) {
         return res.status(404).send()
