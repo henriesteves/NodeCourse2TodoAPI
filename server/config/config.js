@@ -1,19 +1,41 @@
 const env = process.env.NODE_ENV || 'development'
-const dbUrl = 'mongodb://localhost'
-const dbPort = 27017
 
-if (env === 'development') {
-  const dbName = 'TodoApp'
+if (env === 'development' || env === 'test') {
+  const config = require('./config.json')
+  const envConfig = config[env]
 
-  process.env.MONGODB_URI = `${dbUrl}:${dbPort}/${dbName}`
-  console.log(process.env.MONGODB_URI)
-  process.env.PORT = 3000
-} else if (env === 'test') {
-  const dbName = 'TodoAppTest'
+  // console.log(Object.keys(envConfig)) // [ 'PORT', 'MONGODB_URI' ]
 
-  process.env.MONGODB_URI = `${dbUrl}:${dbPort}/${dbName}`
-  process.env.PORT = 3000
+  Object.keys(envConfig).forEach(key => {
+    process.env[key] =  envConfig[key]
+  })
 }
+
+// Heroku commands
+// heroku config
+// heroku config:set NAME=Henrique
+// heroku config
+// heroku config:get NAME
+// heroku config:unset NAME
+// heroku config
+// heroku config:set JWT_SECRET=SECRET
+// heroku config
+
+// const dbUrl = 'mongodb://localhost'
+// const dbPort = 27017
+//
+// if (env === 'development') {
+//   const dbName = 'TodoApp'
+//
+//   process.env.MONGODB_URI = `${dbUrl}:${dbPort}/${dbName}`
+//   console.log(process.env.MONGODB_URI)
+//   process.env.PORT = 3000
+// } else if (env === 'test') {
+//   const dbName = 'TodoAppTest'
+//
+//   process.env.MONGODB_URI = `${dbUrl}:${dbPort}/${dbName}`
+//   process.env.PORT = 3000
+// }
 
 // if (env === 'development') {
 //   process.env.PORT = 3000;
